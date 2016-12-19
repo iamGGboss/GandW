@@ -3,9 +3,7 @@ package gandw.com.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.annotation.ColorInt;
-import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -15,7 +13,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
@@ -120,37 +117,24 @@ public class ExpandTextView extends TextView {
      * 重置显示内容
      */
     private void resetContent() {
-        if (onGlobalLayoutListener == null || maxLines < 1 || TextUtils.isEmpty(initialContent)) {
+        if (maxLines < 1 || TextUtils.isEmpty(initialContent)) {
             return;
         }
-        getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
-    }
-
-    /**
-     * 控件加载监听器
-     */
-    ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-        @Override
-        public void onGlobalLayout() {
-            getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            initialLine = getLineCount();
-            if (initialLine > maxLines) {
-                //大于设置的最大长度后做处理
-                handleContent();
-                if (isExpand) {
-                    if (!TextUtils.isEmpty(allContent)) {
-                        resetContentWithSuper(allContent);
-                    }
-                } else {
-                    if (!TextUtils.isEmpty(partContent)) {
-                        resetContentWithSuper(partContent);
-                    }
+        initialLine = getLineCount();
+        if (initialLine > maxLines) {
+            //大于设置的最大长度后做处理
+            handleContent();
+            if (isExpand) {
+                if (!TextUtils.isEmpty(allContent)) {
+                    resetContentWithSuper(allContent);
+                }
+            } else {
+                if (!TextUtils.isEmpty(partContent)) {
+                    resetContentWithSuper(partContent);
                 }
             }
         }
-    };
-
+    }
 
     /**
      * 初始化的时候的处理
