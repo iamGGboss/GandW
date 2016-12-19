@@ -20,8 +20,7 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
                                    @Override
                                    public void onClick(View view) {
-                                       expandTextview.setText("你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个");
-
+                                       expandTextview.setInitText("你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个你是哪个");
                                    }
                                }
         );

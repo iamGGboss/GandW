@@ -37,12 +37,12 @@ public class ExpandTextView extends TextView {
     private String packupStr;   //收起的文字
     @ColorInt
     private int clickColor;     //点击的颜色
-    private boolean isExpand;   //默认不展开
+    private boolean isExpand = true;   //默认不展开
     private SpannableString allContent;  //全部内容
     private SpannableString partContent; //部分内容
     private CharSequence initialContent;  //初始内容
     private int initialLine;    //初始行数
-    private BufferType mBufferType = BufferType.NORMAL; //获取的文字样式
+
 
     @Override
     public void setMaxLines(int maxLines) {
@@ -108,17 +108,12 @@ public class ExpandTextView extends TextView {
     }
 
     /**
-     * @param text 文本内容
-     * @param type 文本样式
-     *             <p>
-     *             每次重新调用时，重置内容
+     * @param content 设置初始内容
      */
-    @Override
-    public void setText(CharSequence text, BufferType type) {
-        initialContent = text;
-        mBufferType = type;
+    public void setInitText(CharSequence content) {
+        initialContent = content;
+        resetContentWithSuper(content);
         resetContent();
-        super.setText(text, type);
     }
 
     /**
@@ -145,11 +140,11 @@ public class ExpandTextView extends TextView {
                 handleContent();
                 if (isExpand) {
                     if (!TextUtils.isEmpty(allContent)) {
-                        resetContentWithSuper(allContent, mBufferType);
+                        resetContentWithSuper(allContent);
                     }
                 } else {
                     if (!TextUtils.isEmpty(partContent)) {
-                        resetContentWithSuper(partContent, mBufferType);
+                        resetContentWithSuper(partContent);
                     }
                 }
             }
@@ -289,11 +284,11 @@ public class ExpandTextView extends TextView {
             isExpand = !isExpand;
             if (isExpand) {
                 if (!TextUtils.isEmpty(allContent)) {
-                    resetContentWithSuper(allContent, mBufferType);
+                    resetContentWithSuper(allContent);
                 }
             } else {
                 if (!TextUtils.isEmpty(partContent)) {
-                    resetContentWithSuper(partContent, mBufferType);
+                    resetContentWithSuper(partContent);
                 }
             }
         }
@@ -308,8 +303,8 @@ public class ExpandTextView extends TextView {
         }
     }
 
-    private void resetContentWithSuper(CharSequence charSequence, BufferType bufferType) {
-        super.setText(charSequence, bufferType);
+    private void resetContentWithSuper(CharSequence charSequence) {
+        super.setText(charSequence);
     }
 
 }
