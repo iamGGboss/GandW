@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.iamGGboss</groupId>
-  <artifactId>gandw</artifactId>
+  <artifactId>widget</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>aar</packaging>
   <name>GandW Library</name>
