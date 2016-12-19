@@ -18,7 +18,7 @@ import android.widget.TextView;
 /**
  * Author      : GandW
  * Time        : 2016/12/15 10:08
- * Description : 展开收起的Textview
+ * Description : 展开收起的Textview,有bug请联系
  */
 
 public class ExpandTextView extends TextView {
