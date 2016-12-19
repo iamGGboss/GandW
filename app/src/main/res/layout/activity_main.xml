@@ -16,14 +16,14 @@
         android:id="@+id/btn_test_fitmap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="测试fitmap" />
+        android:text="点我" />
 
     <gandw.com.widget.ExpandTextView
         android:id="@+id/etv_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="2"
         android:textColor="@color/colorPrimary"
-        android:textSize="30sp"
         gandw:beforeStr="%%%"
         gandw:clickColor="@color/colorAccent"
         gandw:expandStr="展开" />

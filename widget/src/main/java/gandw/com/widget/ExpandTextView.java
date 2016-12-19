@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.SpannableString;
@@ -16,7 +17,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Author      : GandW
@@ -35,14 +35,35 @@ public class ExpandTextView extends TextView {
     private String beforeClickStr;  //显示在点击之前的字符
     private String expandStr;   //展开的文字
     private String packupStr;   //收起的文字
-    private String clickStr;    //点击的文字
+    @ColorInt
     private int clickColor;     //点击的颜色
-    private boolean isExpand = true;   //默认不展开
+    private boolean isExpand;   //默认不展开
     private SpannableString allContent;  //全部内容
     private SpannableString partContent; //部分内容
     private CharSequence initialContent;  //初始内容
     private int initialLine;    //初始行数
     private BufferType mBufferType = BufferType.NORMAL; //获取的文字样式
+
+    @Override
+    public void setMaxLines(int maxLines) {
+        this.maxLines = maxLines;
+    }
+
+    public void setBeforeClickStr(String beforeClickStr) {
+        this.beforeClickStr = beforeClickStr;
+    }
+
+    public void setExpandStr(String expandStr) {
+        this.expandStr = expandStr;
+    }
+
+    public void setPackupStr(String packupStr) {
+        this.packupStr = packupStr;
+    }
+
+    public void setClickColor(@ColorInt int clickColor) {
+        this.clickColor = clickColor;
+    }
 
     public ExpandTextView(Context context) {
         super(context);
@@ -62,12 +83,11 @@ public class ExpandTextView extends TextView {
     }
 
     private void initAttr(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandTextView);
-        int size = typedArray.getInteger(R.styleable.ExpandTextView_maxLines, -1);
-        if (size <= 0) {
-            size = DEFAULT_LINSE;
+        maxLines = attrs.getAttributeIntValue(android.R.attr.maxLines, -1);
+        if (maxLines == -1) {
+            maxLines = DEFAULT_LINSE;
         }
-        maxLines = size;
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandTextView);
         String before = typedArray.getString(R.styleable.ExpandTextView_beforeStr);
         if (TextUtils.isEmpty(before)) {
             before = DEFAULT_BEFORE_CLICK;
@@ -108,7 +128,6 @@ public class ExpandTextView extends TextView {
         if (onGlobalLayoutListener == null || maxLines < 1 || TextUtils.isEmpty(initialContent)) {
             return;
         }
-        clickStr = isExpand ? packupStr : expandStr;
         getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
     }
 
@@ -124,6 +143,15 @@ public class ExpandTextView extends TextView {
             if (initialLine > maxLines) {
                 //大于设置的最大长度后做处理
                 handleContent();
+                if (isExpand) {
+                    if (!TextUtils.isEmpty(allContent)) {
+                        resetContentWithSuper(allContent, mBufferType);
+                    }
+                } else {
+                    if (!TextUtils.isEmpty(partContent)) {
+                        resetContentWithSuper(partContent, mBufferType);
+                    }
+                }
             }
         }
     };
@@ -133,22 +161,9 @@ public class ExpandTextView extends TextView {
      * 初始化的时候的处理
      */
     private void handleContent() {
-        SpannableString contentSpan = getContent(initialContent);
-        if (!TextUtils.isEmpty(contentSpan)) {
-            if (isExpand) {
-                if (TextUtils.isEmpty(allContent)) {
-                    allContent = contentSpan;
-                }
-                setText(allContent);
-            } else {
-                if (TextUtils.isEmpty(partContent)) {
-                    partContent = contentSpan;
-                }
-                setText(partContent);
-            }
-            setMovementMethod(LinkMovementMethod.getInstance());    //不设置 没有点击
-            setHighlightColor(Color.TRANSPARENT); //设置点击后的颜色为透明
-        }
+        initContent(initialContent);
+        setMovementMethod(LinkMovementMethod.getInstance());    //不设置 没有点击
+        setHighlightColor(Color.TRANSPARENT); //设置点击后的颜色为透明
     }
 
 
@@ -173,80 +188,92 @@ public class ExpandTextView extends TextView {
         return builder;
     }
 
-    private SpannableString getContent(CharSequence content) {
-        if (TextUtils.isEmpty(clickStr) || TextUtils.isEmpty(content)) {
-            return null;
+    private void initContent(CharSequence content) {
+        if (TextUtils.isEmpty(expandStr) || TextUtils.isEmpty(packupStr) || TextUtils.isEmpty(content)) {
+            return;
         }
+        initAllContent(content);
+        initPartContent(content);
+    }
+
+    /**
+     * 初始化部分内容
+     */
+    private void initPartContent(CharSequence content) {
+        //未展开的情况
         Layout layout = getLayout();
-        if (isExpand) {
-            //展开的情况
-            int endIndex = layout.getLineStart(initialLine);
-            int startIndex = layout.getLineStart(initialLine - 1);
-            int index = endIndex - startIndex;
-            if (index > 0) {
-                //获取最后行长度
-                CharSequence newContent = content.subSequence(0, index);
-                TextPaint paint = getPaint();
-                float newSize = paint.measureText(newContent.toString());
-                //测量点击文字的长度
-                float clickSize = paint.measureText(clickStr);
-                //获取每行的最大宽度
-                float width = layout.getWidth();
-                //获取拼接后的长度
-                float sumSize = newSize + clickSize;
-                //这里有两种情况
-                StringBuilder builder = new StringBuilder(content);
-                //未超过最大显示
-                String splace = getResources().getString(R.string.splace);
-                //获取空格长度
-                float splaceSize = paint.measureText(splace);
-                float needFillSize;
-                if (sumSize > width) {
-                    //超过了最大显示
-                    builder.append("\n");
-                    needFillSize = width - clickSize;
-                } else {
-                    needFillSize = width - sumSize;
-                }
-                int needFillTimes = (int) (needFillSize / splaceSize);
-                for (int i = 0; i < needFillTimes; i++) {
-                    builder.append(splace);
-                }
-                builder.append(clickStr);
-                SpannableString span = createSpan(builder.toString(), clickStr);
-                return span;
-            } else {
-                return null;
+        //计算单行的才长度
+        int endIndex = layout.getLineStart(maxLines);
+        int startIndex = layout.getLineStart(maxLines - 1);
+        int index = endIndex - startIndex;
+        if (index > 0) {
+            //排除当前行的情况
+            CharSequence newContent = content.subSequence(0, index);
+            //测量单行长度
+            TextPaint paint = getPaint();
+            float newContentSize = paint.measureText(newContent.toString());
+            //测量点击文字和点击文字之前替代符的长度
+            //点击之前的字符的长度
+            float beforeSize = paint.measureText(beforeClickStr);
+            float clickSize = paint.measureText(expandStr);
+            //计算需要截取的长度
+            float maxSize = newContentSize - beforeSize - clickSize;
+            //获取截取的坐标
+            //下面这几个就是剪切显示，就是大于maxWidth的时候只截取指定长度的显示
+            int len = paint.breakText(newContent, 0, newContent.length(), true, maxSize, null);
+            //需要显示的长度
+            int needSize = startIndex + len + 1;
+            StringBuilder builder = new StringBuilder();
+            String toString = builder.append(content.subSequence(0, needSize)).append(beforeClickStr).append(expandStr).toString();
+            SpannableString span = createSpan(toString, expandStr);
+            if (!TextUtils.isEmpty(span)) {
+                partContent = span;
             }
-        } else {
-            //未展开的情况
-            //计算单行的才长度
-            int endIndex = layout.getLineStart(maxLines);
-            int startIndex = layout.getLineStart(maxLines - 1);
-            int index = endIndex - startIndex;
-            if (index > 0) {
-                //排除当前行的情况
-                CharSequence newContent = content.subSequence(0, index);
-                //测量单行长度
-                TextPaint paint = getPaint();
-                float newContentSize = paint.measureText(newContent.toString());
-                //测量点击文字和点击文字之前替代符的长度
-                //点击之前的字符的长度
-                float beforeSize = paint.measureText(beforeClickStr);
-                float clickSize = paint.measureText(clickStr);
-                //计算需要截取的长度
-                float maxSize = newContentSize - beforeSize - clickSize;
-                //获取截取的坐标
-                //下面这几个就是剪切显示，就是大于maxWidth的时候只截取指定长度的显示
-                int len = paint.breakText(newContent, 0, newContent.length(), true, maxSize, null);
-                //需要显示的长度
-                int needSize = startIndex + len + 1;
-                StringBuilder builder = new StringBuilder();
-                String toString = builder.append(content.subSequence(0, needSize)).append(beforeClickStr).append(clickStr).toString();
-                SpannableString span = createSpan(toString, clickStr);
-                return span;
+        }
+    }
+
+    /**
+     * 初始化全部内容
+     */
+    private void initAllContent(CharSequence content) {
+        Layout layout = getLayout();
+        //展开的情况
+        int endIndex = layout.getLineStart(initialLine);
+        int startIndex = layout.getLineStart(initialLine - 1);
+        int index = endIndex - startIndex;
+        if (index > 0) {
+            //获取最后行长度
+            CharSequence newContent = content.subSequence(0, index);
+            TextPaint paint = getPaint();
+            float newSize = paint.measureText(newContent.toString());
+            //测量点击文字的长度
+            float clickSize = paint.measureText(packupStr);
+            //获取每行的最大宽度
+            float width = layout.getWidth();
+            //获取拼接后的长度
+            float sumSize = newSize + clickSize;
+            //这里有两种情况
+            StringBuilder builder = new StringBuilder(content);
+            //未超过最大显示
+            String splace = getResources().getString(R.string.splace);
+            //获取空格长度
+            float splaceSize = paint.measureText(splace);
+            float needFillSize;
+            if (sumSize > width) {
+                //超过了最大显示
+                builder.append("\n");
+                needFillSize = width - clickSize;
             } else {
-                return null;
+                needFillSize = width - sumSize;
+            }
+            int needFillTimes = (int) (needFillSize / splaceSize);
+            for (int i = 0; i < needFillTimes; i++) {
+                builder.append(splace);
+            }
+            builder.append(packupStr);
+            SpannableString span = createSpan(builder.toString(), packupStr);
+            if (!TextUtils.isEmpty(span)) {
+                allContent = span;
             }
         }
     }
@@ -261,17 +288,13 @@ public class ExpandTextView extends TextView {
         public void onClick(View view) {
             isExpand = !isExpand;
             if (isExpand) {
-                if (TextUtils.isEmpty(allContent)) {
-                    clickStr = packupStr;
-                    allContent = getContent(initialContent);
+                if (!TextUtils.isEmpty(allContent)) {
+                    resetContentWithSuper(allContent, mBufferType);
                 }
-                setText(allContent);
             } else {
-                if (TextUtils.isEmpty(partContent)) {
-                    clickStr = expandStr;
-                    partContent = getContent(initialContent);
+                if (!TextUtils.isEmpty(partContent)) {
+                    resetContentWithSuper(partContent, mBufferType);
                 }
-                setText(partContent);
             }
         }
 
@@ -283,6 +306,10 @@ public class ExpandTextView extends TextView {
             //超链接形式的下划线，false 表示不显示下划线，true表示显示下划线
             ds.setUnderlineText(false);
         }
+    }
+
+    private void resetContentWithSuper(CharSequence charSequence, BufferType bufferType) {
+        super.setText(charSequence, bufferType);
     }
 
 }
