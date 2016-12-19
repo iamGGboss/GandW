@@ -273,7 +273,6 @@ public class ExpandTextView extends TextView {
                 }
                 setText(partContent);
             }
-            Toast.makeText(getContext(), "点击了", Toast.LENGTH_SHORT).show();
         }
 
         @Override
