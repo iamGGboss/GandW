@@ -44,22 +44,27 @@ public class ExpandTextView extends TextView {
     @Override
     public void setMaxLines(int maxLines) {
         this.maxLines = maxLines;
+        resetContent();
     }
 
     public void setBeforeClickStr(String beforeClickStr) {
         this.beforeClickStr = beforeClickStr;
+        resetContent();
     }
 
     public void setExpandStr(String expandStr) {
         this.expandStr = expandStr;
+        resetContent();
     }
 
     public void setPackupStr(String packupStr) {
         this.packupStr = packupStr;
+        resetContent();
     }
 
     public void setClickColor(@ColorInt int clickColor) {
         this.clickColor = clickColor;
+        resetContent();
     }
 
     public ExpandTextView(Context context) {
