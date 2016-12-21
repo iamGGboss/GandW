@@ -13,10 +13,22 @@
     tools:context="com.gandw.roshan.myapplication.main.MainActivity">
 
     <Button
-        android:id="@+id/btn_test_fitmap"
+        android:id="@+id/btn_test"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="点我" />
+
+    <Button
+        android:id="@+id/btn_test_string"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试网络string" />
+
+    <Button
+        android:id="@+id/btn_test_json"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试网络json" />
 
     <gandw.com.widget.ExpandTextView
         android:id="@+id/etv_main"
@@ -33,4 +45,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="15sp" />
+
 </LinearLayout>
