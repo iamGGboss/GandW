@@ -1,5 +1,6 @@
 package com.gandw.roshan.myapplication.main;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.gandw.roshan.myapplication.R;
+import com.gandw.roshan.myapplication.data.api.name.NameResolver;
+import com.gandw.roshan.myapplication.data.api.name.NameService;
+
+import java.util.concurrent.TimeUnit;
 
 import gandw.com.network.RetrofitHelper;
 import gandw.com.widget.ExpandTextView;
@@ -16,17 +21,20 @@ import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
     private MainPresenter presenter;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dialog = new ProgressDialog(this);
         Button btn = (Button) findViewById(R.id.btn_test);
         Button btnString = (Button) findViewById(R.id.btn_test_string);
         Button btnJson = (Button) findViewById(R.id.btn_test_json);
@@ -35,63 +43,41 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         btnString.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Retrofit retrofit = RetrofitHelper.getRetrofit();
-                ApiMain call = retrofit.create(ApiMain.class);
-                Observable<String> login = call.getString();
-                login.observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(new Observer<String>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
+                dialog.setMessage("正在请求会员");
+                dialog.show();
+                Observable<String> string = NameResolver.getInstance().getString();
+                if (null != string) {
+                    string.subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<String>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onNext(String s) {
-                                Log.d("MainActivity", s);
-                            }
+                                @Override
+                                public void onNext(String s) {
 
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.d("MainActivity", e.getMessage());
-                            }
+                                }
 
-                            @Override
-                            public void onComplete() {
-                            }
-                        });
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onComplete() {
+
+                                }
+                            });
+                } else {
+                    dialog.dismiss();
+                }
             }
         });
         btnJson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Retrofit retrofit = RetrofitHelper.getRetrofit();
-                ApiMain call = retrofit.create(ApiMain.class);
-                Observable<MainResponse> json = call.getJson();
-                json.observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe(new Observer<MainResponse>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-
-                            }
-
-                            @Override
-                            public void onNext(MainResponse mainResponse) {
-                                MainResponse.Name name = mainResponse.data;
-                                Log.d("MainActivity", name.firstName);
-                                Log.d("MainActivity", name.lastName);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.d("MainActivity", e.getMessage());
-                            }
-
-                            @Override
-                            public void onComplete() {
-                            }
-                        });
             }
         });
         btn.setOnClickListener(

@@ -1,4 +1,4 @@
-package com.gandw.roshan.myapplication.main;
+package com.gandw.roshan.myapplication.data.api.name;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -10,9 +10,9 @@ import retrofit2.http.GET;
  * Description : 测试网络架构
  */
 
-public interface ApiMain {
+public interface NameService {
     @GET("1")
-    Observable<MainResponse> getJson();
+    Observable<NameResponse> getJson();
 
     @GET("2")
     Observable<String> getString();
