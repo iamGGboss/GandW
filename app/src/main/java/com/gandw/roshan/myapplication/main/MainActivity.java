@@ -31,9 +31,17 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private ProgressDialog dialog;
 
     @Override
+    public void attachPresenter(MainContract.Presenter presenter) {
+        presenter = new MainPresenter(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (null == presenter) {
+            Log.d("MainActivity", "空的");
+        }
         dialog = new ProgressDialog(this);
         Button btn = (Button) findViewById(R.id.btn_test);
         Button btnString = (Button) findViewById(R.id.btn_test_string);
@@ -90,8 +98,4 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         );
     }
 
-    @Override
-    public MainContract.Presenter createPresenter() {
-        return presenter = new MainPresenter(this);
-    }
 }

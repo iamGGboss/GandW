@@ -8,5 +8,5 @@ package com.gandw.common;
  */
 
 public interface BaseView<T> {
-    T createPresenter();
+    void attachPresenter(T presenter);
 }
