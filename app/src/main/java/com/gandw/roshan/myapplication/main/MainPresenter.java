@@ -15,6 +15,6 @@ public class MainPresenter implements MainContract.Presenter {
 
     public MainPresenter(MainContract.View view) {
         this.view = checkNotNull(view);
-        view.attachPresenter(this);
+        view.createPresenter();
     }
 }
