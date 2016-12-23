@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         Button btnString = (Button) findViewById(R.id.btn_test_string);
         Button btnJson = (Button) findViewById(R.id.btn_test_json);
         final ExpandTextView expandTextview = (ExpandTextView) findViewById(R.id.etv_main);
+        expandTextview.setInitText("这只是一个测试，这只是一个测试，这只是一个测试，这只是一个测试，这只是一个测试，这只是一个测试，");
         final MobileNumEditText mobileNumEditText = (MobileNumEditText) findViewById(R.id.mnet);
         btnString.setOnClickListener(new View.OnClickListener() {
             @Override
