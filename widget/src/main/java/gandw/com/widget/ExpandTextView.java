@@ -3,7 +3,9 @@ package gandw.com.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.annotation.ColorInt;
+import android.support.annotation.RequiresApi;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -13,6 +15,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 /**
@@ -21,7 +24,7 @@ import android.widget.TextView;
  * Description : 展开收起的Textview,有bug请联系
  */
 
-public class ExpandTextView extends TextView {
+public class ExpandTextView extends TextView implements ViewTreeObserver.OnGlobalLayoutListener {
 
     private static final int DEFAULT_LINSE = 3;
     private static final String DEFAULT_BEFORE_CLICK = "...";
@@ -114,9 +117,10 @@ public class ExpandTextView extends TextView {
      */
     public void setInitText(CharSequence content) {
         initialContent = content;
-        resetContentWithSuper(content);
+        setText(content);
         resetContent();
     }
+
 
     /**
      * 重置显示内容
@@ -125,21 +129,30 @@ public class ExpandTextView extends TextView {
         if (maxLines < 1 || TextUtils.isEmpty(initialContent)) {
             return;
         }
+        getViewTreeObserver().addOnGlobalLayoutListener(this);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onGlobalLayout() {
+        getViewTreeObserver().removeOnGlobalLayoutListener(this);
         initialLine = getLineCount();
         if (initialLine > maxLines) {
             //大于设置的最大长度后做处理
             handleContent();
             if (isExpand) {
                 if (!TextUtils.isEmpty(allContent)) {
-                    resetContentWithSuper(allContent);
+                    setText(allContent);
                 }
             } else {
                 if (!TextUtils.isEmpty(partContent)) {
-                    resetContentWithSuper(partContent);
+                    setText(partContent);
                 }
             }
         }
     }
+
+
 
     /**
      * 初始化的时候的处理
@@ -262,7 +275,6 @@ public class ExpandTextView extends TextView {
         }
     }
 
-
     /**
      * 点击span
      */
@@ -273,11 +285,11 @@ public class ExpandTextView extends TextView {
             isExpand = !isExpand;
             if (isExpand) {
                 if (!TextUtils.isEmpty(allContent)) {
-                    resetContentWithSuper(allContent);
+                    setText(allContent);
                 }
             } else {
                 if (!TextUtils.isEmpty(partContent)) {
-                    resetContentWithSuper(partContent);
+                    setText(partContent);
                 }
             }
         }
@@ -290,10 +302,6 @@ public class ExpandTextView extends TextView {
             //超链接形式的下划线，false 表示不显示下划线，true表示显示下划线
             ds.setUnderlineText(false);
         }
-    }
-
-    private void resetContentWithSuper(CharSequence charSequence) {
-        super.setText(charSequence);
     }
 
 }
