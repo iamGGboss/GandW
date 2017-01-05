@@ -31,7 +31,6 @@
         android:text="测试网络json" />
 
     <gandw.com.widget.ExpandTextView
-        android:text="这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,这只是一个测试,"
         android:id="@+id/etv_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,6 +39,11 @@
         gandw:beforeStr="%%%"
         gandw:clickColor="@color/colorAccent"
         gandw:expandStr="展开" />
+
+    <com.gandw.expandabletextview.ExpandableTextView
+        android:id="@+id/etv_main_gg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <gandw.com.widget.MobileNumEditText
         android:id="@+id/mnet"

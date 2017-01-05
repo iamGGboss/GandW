@@ -1,1 +1,1 @@
-include ':app', ':widget', ':common', ':network'
+include ':app', ':widget', ':common', ':network', ':expandabletextview'

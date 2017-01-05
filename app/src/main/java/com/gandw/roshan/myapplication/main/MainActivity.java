@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.gandw.expandabletextview.ExpandableTextView;
 import com.gandw.roshan.myapplication.R;
 import com.gandw.roshan.myapplication.data.api.name.NameResolver;
 import com.gandw.roshan.myapplication.data.api.name.NameService;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             Log.d("MainActivity", "空的");
         }
         dialog = new ProgressDialog(this);
+        ExpandableTextView textview = (ExpandableTextView) findViewById(R.id.etv_main_gg);
+        textview.setText("agagfkajgfkjagfkjagfkjfgjfg");
         Button btn = (Button) findViewById(R.id.btn_test);
         Button btnString = (Button) findViewById(R.id.btn_test_string);
         Button btnJson = (Button) findViewById(R.id.btn_test_json);

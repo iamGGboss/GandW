@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -121,7 +122,6 @@ public class ExpandTextView extends TextView implements ViewTreeObserver.OnGloba
         resetContent();
     }
 
-
     /**
      * 重置显示内容
      */
@@ -151,7 +151,6 @@ public class ExpandTextView extends TextView implements ViewTreeObserver.OnGloba
             }
         }
     }
-
 
 
     /**
@@ -304,5 +303,10 @@ public class ExpandTextView extends TextView implements ViewTreeObserver.OnGloba
         }
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+    }
 }
 

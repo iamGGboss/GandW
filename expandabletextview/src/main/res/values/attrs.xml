@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ExpandTextView">
+        <attr name="beforeStr" format="string" />
+        <attr name="expandStr" format="string" />
+        <attr name="packupStr" format="string" />
+        <attr name="clickColor" format="color" />
+    </declare-styleable>
+</resources>
