@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:gandw="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -13,42 +12,15 @@
     tools:context="com.gandw.roshan.myapplication.main.MainActivity">
 
     <Button
-        android:id="@+id/btn_test"
+        android:id="@+id/btn_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="点我" />
+        android:text="测试状态布局" />
 
     <Button
-        android:id="@+id/btn_test_string"
+        android:id="@+id/btn_turns"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="测试网络string" />
-
-    <Button
-        android:id="@+id/btn_test_json"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="测试网络json" />
-
-    <gandw.com.widget.ExpandTextView
-        android:id="@+id/etv_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="2"
-        android:textColor="@color/colorPrimary"
-        gandw:beforeStr="%%%"
-        gandw:clickColor="@color/colorAccent"
-        gandw:expandStr="展开" />
-
-    <com.gandw.expandabletextview.ExpandableTextView
-        android:id="@+id/etv_main_gg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <gandw.com.widget.MobileNumEditText
-        android:id="@+id/mnet"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="15sp" />
+        android:text="测试轮播" />
 
 </LinearLayout>

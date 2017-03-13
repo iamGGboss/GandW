@@ -1,8 +1,8 @@
 package com.gandw.roshan.myapplication.data.api.name;
 
 import gandw.com.network.RetrofitHelper;
-import io.reactivex.Observable;
 import retrofit2.Retrofit;
+import rx.Observable;
 
 /**
  * Author      : GandW

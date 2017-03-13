@@ -1,7 +1,7 @@
 package com.gandw.roshan.myapplication.data.api.name;
 
-import io.reactivex.Observable;
 import retrofit2.http.GET;
+import rx.Observable;
 
 /**
  * Author      : GandW
