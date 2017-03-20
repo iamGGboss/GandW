@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.gandw.roshan.myapplication.KeyboardActivity;
 import com.gandw.roshan.myapplication.R;
 import com.gandw.roshan.myapplication.StatusActivity;
 import com.gandw.roshan.myapplication.TurnsActivity;
@@ -36,6 +37,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TurnsActivity.class);
+                startActivity(intent);
+            }
+        });
+        Button btnKeyboard = (Button) findViewById(R.id.btn_keyboard);
+        btnKeyboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), KeyboardActivity.class);
                 startActivity(intent);
             }
         });

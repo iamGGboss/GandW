@@ -1,1 +1,1 @@
-include ':app', ':widget', ':common', ':network', ':expandabletextview', ':statusview'
+include ':app', ':widget', ':common', ':network', ':expandabletextview', ':statusview', ':numkeyboard'

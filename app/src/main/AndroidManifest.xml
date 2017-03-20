@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".StatusActivity" />
         <activity android:name=".TurnsActivity" />
-        <activity android:name=".ConstrainActivity"></activity>
+        <activity android:name=".ConstrainActivity" />
+        <activity android:name=".KeyboardActivity"/>
     </application>
 
 </manifest>
