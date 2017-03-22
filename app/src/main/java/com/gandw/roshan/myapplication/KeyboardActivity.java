@@ -1,10 +1,14 @@
 package com.gandw.roshan.myapplication;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gandw.numkeyboard.CustomKeyBoard;
@@ -19,16 +23,27 @@ public class KeyboardActivity extends AppCompatActivity implements OnKeyboardDis
         Button btn = (Button) findViewById(R.id.button2);
         EditText editText1 = (EditText) findViewById(R.id.et1);
         EditText editText2 = (EditText) findViewById(R.id.et2);
+        TextView textView = new TextView(getApplicationContext());
+        textView.setTextColor(Color.BLACK);
+        textView.setText("haha");
+        View.OnClickListener  onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(KeyboardActivity.this, "点击了我", Toast.LENGTH_SHORT).show();
+            }
+        };
         CustomKeyBoard customKeyBoard1 = new CustomKeyBoard.Builder(this)
+                .setDownView(textView)
+                .setDownViewClickListener(onClickListener)
                 .build();
-        customKeyBoard1.attachEditText(editText1);
-        int code = customKeyBoard1.getClass().hashCode();
-        Log.d("KeyboardActivity", "code:" + code);
-        CustomKeyBoard customKeyBoard2 = new CustomKeyBoard.Builder(this)
-                .build();
-        customKeyBoard2.attachEditText(editText2);
-        int code1 = customKeyBoard2.getClass().hashCode();
-        Log.d("KeyboardActivity", "code1:" + code1);
+        customKeyBoard1.attachEditText(editText1, null);
+        customKeyBoard1.attachEditText(editText2, new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Toast.makeText(KeyboardActivity.this, "我试试", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
     }
 
     @Override

@@ -6,10 +6,10 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.os.Build;
 import android.support.annotation.XmlRes;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,8 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.Toast;
+
 
 /**
  * Author      : GandW
@@ -47,7 +48,7 @@ public class CustomKeyBoard {
         }
     }
 
-    public void attachEditText(final EditText editText) {
+    public void attachEditText(final EditText editText, final View.OnTouchListener listener) {
         keyboardView.setOnKeyboardActionListener(new KeyboardView.OnKeyboardActionListener() {
             @Override
             public void onPress(int primaryCode) {
@@ -115,19 +116,29 @@ public class CustomKeyBoard {
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int inType = editText.getInputType(); // backup the input type
-                //这里区分下SDK版本以解决光标的问题
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    editText.setShowSoftInputOnFocus(false);
-                } else {
-                    editText.setInputType(InputType.TYPE_NULL);
+                attachEvent(event, editText);
+                if (listener != null) {
+                    listener.onTouch(v, event);
                 }
-                editText.onTouchEvent(event);
-                CustomKeyBoard.this.show();
-                editText.setInputType(inType);
                 return false;
             }
         });
+    }
+
+    /**
+     * @param editText 关联对应的输入事件
+     */
+    private void attachEvent(MotionEvent event, EditText editText) {
+        int inType = editText.getInputType(); // backup the input type
+        //这里区分下SDK版本以解决光标的问题
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            editText.setShowSoftInputOnFocus(false);
+        } else {
+            editText.setInputType(InputType.TYPE_NULL);
+        }
+        editText.onTouchEvent(event);
+        CustomKeyBoard.this.show();
+        editText.setInputType(inType);
     }
 
     private EditText getCurrentFocusEditText() {
@@ -149,6 +160,10 @@ public class CustomKeyBoard {
 
         private Context context;
 
+        private View downView;
+
+        private View.OnClickListener listener;
+
         @XmlRes
         private int keyboardID = R.xml.keyboard_defu;
 
@@ -163,14 +178,24 @@ public class CustomKeyBoard {
             return this;
         }
 
-        public Builder setOnDownClickListener(OnKeyboardDismissListener onDismissListener) {
+        public Builder setOnKeyboardDismissListener(OnKeyboardDismissListener onDismissListener) {
             this.onDismissListener = onDismissListener;
+            return this;
+        }
+
+        public Builder setDownView(View downView) {
+            this.downView = downView;
+            return this;
+        }
+
+        public Builder setDownViewClickListener(View.OnClickListener listener) {
+            this.listener = listener;
             return this;
         }
 
         public CustomKeyBoard build() {
             CustomKeyBoard customKeyBoard = new CustomKeyBoard();
-            View rootView = LayoutInflater.from(context).inflate(R.layout.view_keyboard, null);
+            LinearLayout rootView = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.view_keyboard, null);
             final PopupWindow popupWindow = new PopupWindow(rootView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             popupWindow.setAnimationStyle(R.style.keyboard_animation);
             if (null != onDismissListener) {
@@ -183,13 +208,33 @@ public class CustomKeyBoard {
             }
             customKeyBoard.popupWindow = popupWindow;
             /**自定义键盘的事件处理*/
-            Button btnDowd = (Button) rootView.findViewById(R.id.btn_down);
-            btnDowd.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    popupWindow.dismiss();
-                }
-            });
+            if (downView == null) {
+                Button button = new Button(context);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                button.setText("收起");
+                button.setLayoutParams(params);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        popupWindow.dismiss();
+                        if (null != listener) {
+                            listener.onClick(view);
+                        }
+                    }
+                });
+                rootView.addView(button, 0);
+            } else {
+                downView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        popupWindow.dismiss();
+                        if (null != listener) {
+                            listener.onClick(view);
+                        }
+                    }
+                });
+                rootView.addView(downView, 0);
+            }
             //默认键盘布局
             KeyboardView keyBoardView = (KeyboardView) rootView.findViewById(R.id.kbv);
             //设置键盘布局
